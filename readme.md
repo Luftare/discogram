@@ -15,4 +15,4 @@ WATCHED_NAMES=Some discord user name, other, separated by comma
 
 ## FAQ
 
-- How to get channel id? https://api.telegram.org/bot<token>/getUpdates
+- How to get channel id? https://api.telegram.org/bot<-token-here->/getUpdates
