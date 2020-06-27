@@ -4,7 +4,7 @@ Announce when someone starts playing a game.
 
 ## Setup
 
-Create `.env` file to the repo root with following content filled with corresponding details.
+Create `.env` file to the module root with following content filled with corresponding details.
 
 ```
 DISCORD_TOKEN=
