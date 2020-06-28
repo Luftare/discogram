@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const watchedNames = process.env.WATCHED_NAMES.split(',').map((v) => v.trim());
-const GUILD_ID = '142743212342116352';
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -58,8 +58,6 @@ client.on('presenceUpdate', (previous, current) => {
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
   if (startedPlaying) {
-    const playingWatchedUsers = getPlayingWatchedUsers();
-
     safeCall(
       playerStartGameHandler,
       current.user.username,

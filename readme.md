@@ -8,6 +8,7 @@ Create `.env` file to the module root with following content filled with corresp
 
 ```
 DISCORD_TOKEN=
+DISCORD_GUILD_ID=
 TELEGRAM_TOKEN=
 TELEGRAM_CHANNEL_ID=
 WATCHED_NAMES=Some discord user name, other, separated by comma
