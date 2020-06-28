@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const FLOOD_LIMIT = 10 * 60 * 1000;
+
 let messageHistory = [];
 
 const registerMessage = (content) => {
