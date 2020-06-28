@@ -6,25 +6,9 @@ const {
 } = require('./modules/discord');
 const { sendMessage } = require('./modules/telegram');
 
-const counts = [
-  '🙅',
-  '🙋🏻‍♂️',
-  '👬',
-  '👨‍👧‍👦',
-  '👨‍👨‍👦‍👦',
-  '👨‍👨‍👦‍👦🤦‍♂️',
-  '👨‍👦‍👦👨‍👦‍👦',
-  '👨‍👨‍👦‍👦👨‍👦‍👦',
-  '👨‍👨‍👦‍👦👨‍👨‍👦‍👦',
-  '🏟',
-  '🏟',
-  '🏟',
-  '🏟',
-];
-
 onPlayerStartGame((userName, gameName, allPlayerNames) => {
   sendMessage(
-    `<b>${userName}</b> 🎮 ${gameName} (${counts[allPlayerNames.length]})`
+    `<b>${userName}</b> 🎮 ${gameName} (${allPlayerNames.map(() => '🕹').join('')]})`
   );
 });
 
