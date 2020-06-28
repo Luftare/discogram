@@ -11,7 +11,7 @@ const registerMessage = (content) => {
 };
 
 const isFlood = (content) =>
-  messageHistory.includes((m) => m.content === content);
+  !!messageHistory.find((m) => m.content === content);
 
 const sendMessage = (content) => {
   if (isFlood(content)) return;
