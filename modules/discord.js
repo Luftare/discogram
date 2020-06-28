@@ -16,7 +16,7 @@ const toLatestActivity = (activities) =>
 const isPlayingActivity = (a) => a.type === 'PLAYING';
 
 const startedNewGame = (previousActivities, recentGameActivity) =>
-  !previousActivities.includes(
+  !previousActivities.find(
     (previousActivity) => previousActivity.name === recentGameActivity.name
   );
 
