@@ -24,6 +24,7 @@ const safeCall = (fn, ...args) => fn && fn(...args);
 
 client.on('presenceUpdate', (previous, current) => {
   if (!watchedNames.includes(current.user.username)) return;
+  if (!previous || !current) return;
 
   const currentActivities = [...current.activities];
   const previousActivities = [...previous.activities];
