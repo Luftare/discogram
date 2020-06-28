@@ -24,7 +24,7 @@ const counts = [
 
 onPlayerStartGame((userName, gameName, allPlayerNames) => {
   sendMessage(
-    `<b>${userName}</b> 🎮 ${gameName} (${count[allPlayerNames.length]})`
+    `<b>${userName}</b> 🎮 ${gameName} (${counts[allPlayerNames.length]})`
   );
 });
 
