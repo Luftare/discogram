@@ -1,10 +1,31 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const watchedNames = process.env.WATCHED_NAMES.split(',').map((v) => v.trim());
+const GUILD_ID = '142743212342116352';
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
+
+const getPlayingWatchedUsers = () => {
+  const [, guild] = [...client.guilds.cache].find(([id]) => id == GUILD_ID);
+  const presences = [...guild.presences.cache].map(([, presence]) => presence);
+  const watchedPresences = presences.filter((presence) =>
+    watchedNames.includes(presence.user.username)
+  );
+  const playingWacthedPresences = watchedPresences.filter(
+    (p) => !!p.activities.find(isPlayingActivity)
+  );
+  return playingWacthedPresences.map((p) => ({
+    userName: p.user.username,
+    gameName: p.activities.find(isPlayingActivity).name,
+  }));
+};
+
+const getWatchedPlayersPlayingGame = (game) =>
+  getPlayingWatchedUsers()
+    .filter(({ gameName }) => gameName === game)
+    .map(({ userName }) => userName);
 
 const toLatestActivity = (activities) =>
   [...activities].sort(
@@ -36,11 +57,16 @@ client.on('presenceUpdate', (previous, current) => {
 
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
-  safeCall(
-    playerStartGameHandler,
-    current.user.username,
-    recentGameActivity.name
-  );
+  if (startedPlaying) {
+    const playingWatchedUsers = getPlayingWatchedUsers();
+
+    safeCall(
+      playerStartGameHandler,
+      current.user.username,
+      recentGameActivity.name,
+      getWatchedPlayersPlayingGame(recentGameActivity.name)
+    );
+  }
 });
 
 let playerStartGameHandler = null;
