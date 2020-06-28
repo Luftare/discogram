@@ -8,9 +8,9 @@ const { sendMessage } = require('./modules/telegram');
 
 onPlayerStartGame((userName, gameName, allPlayerNames) => {
   sendMessage(
-    `<b>${userName}</b> 🎮 ${gameName} (${allPlayerNames
-      .map(() => '🕹')
-      .join('')})`
+    `${allPlayerNames
+      .map((name) => (name === userName ? `<b>${name}</b>` : name))
+      .join(', ')} 🎮 ${gameName}`
   );
 });
 
