@@ -1,7 +1,23 @@
 const fetch = require('node-fetch');
+const FLOOD_LIMIT = 10 * 60 * 1000;
 let messageHistory = [];
 
+const registerMessage = (content) => {
+  const now = Date.now();
+  messageHistory.push({ content, time: now });
+  messageHistory = messageHistory.filter(
+    ({ time }) => now - time < FLOOD_LIMIT
+  );
+};
+
+const isFlood = (content) =>
+  messageHistory.includes((m) => m.content === content);
+
 const sendMessage = (content) => {
+  if (isFlood(content)) return;
+
+  registerMessage(content);
+
   console.log(content);
 
   fetch(
