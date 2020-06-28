@@ -15,9 +15,10 @@ const toLatestActivity = (activities) =>
 
 const isPlayingActivity = (a) => a.type === 'PLAYING';
 
-const toStartedPlaying = (previousActivities, currentActivities) =>
-  currentActivities.filter(isPlayingActivity).length >
-  previousActivities.filter(isPlayingActivity).length;
+const startedNewGame = (previousActivities, recentGameActivity) =>
+  !previousActivities.includes(
+    (previousActivity) => previousActivity.name === recentGameActivity.name
+  );
 
 const safeCall = (fn, ...args) => fn && fn(...args);
 
@@ -27,16 +28,12 @@ client.on('presenceUpdate', (previous, current) => {
   const currentActivities = [...current.activities];
   const previousActivities = [...previous.activities];
 
-  const startedPlaying = toStartedPlaying(
-    previousActivities,
-    currentActivities
-  );
-
   const recentGameActivity = toLatestActivity(
     currentActivities.filter(isPlayingActivity)
   );
-
   if (!recentGameActivity) return;
+
+  const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
   safeCall(
     playerStartGameHandler,

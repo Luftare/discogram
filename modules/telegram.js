@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+let messageHistory = [];
 
 const sendMessage = (content) => {
   console.log(content);
