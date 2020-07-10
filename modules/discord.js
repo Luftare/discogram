@@ -45,20 +45,18 @@ const startedNewGame = (previousActivities, recentGameActivity) =>
 const safeCall = (fn, ...args) => fn && fn(...args);
 
 client.on('presenceUpdate', (previous, current) => {
-  if (!watchedNames.includes(current.user.username)) return console.log('ABORTING: Non-watched user event');
+  if (!watchedNames.includes(current.user.username)) return;
 
-  if (!previous || !current) return console.log('ABORTING: previous or current state missing');
+  if (!previous || !current) return console.log('DISCORD ABORTING: previous or current state missing');
 
   const currentActivities = [...current.activities];
   const previousActivities = [...previous.activities];
 
   const playingActivities = currentActivities.filter(isPlayingActivity);
-  
-  console.log(playingActivities.map(a => `activity: ${a.name}, timeStamps: ${a.timestamps}`))
 
   const recentGameActivity = toLatestActivity(playingActivities);
 
-  if (!recentGameActivity) return console.log('ABORTING: no recent game actibity');
+  if (!recentGameActivity) return console.log('DISCORD ABORTING: no recent game activity');
 
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
