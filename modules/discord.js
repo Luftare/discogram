@@ -58,7 +58,6 @@ client.on('presenceUpdate', (previous, current) => {
 
   const recentGameActivity = toLatestActivity(playingActivities);
 
-
   if (!recentGameActivity) return console.log('ABORTING: no recent game actibity');
 
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
