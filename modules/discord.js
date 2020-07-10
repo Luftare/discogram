@@ -28,11 +28,13 @@ const getWatchedPlayersPlayingGame = (game) =>
     .map(({ userName }) => userName);
 
 const toLatestActivity = (activities) =>
-  [...activities].sort(
-    (a, b) =>
-      new Date(b.timeStamps.start).getTime() -
-      new Date(a.timeStamps.start).getTime()
-  )[0];
+  [...activities]
+    .filter(({ timeStamps }) => !!timeStamps)
+    .sort(
+      (a, b) =>
+        new Date(b.timeStamps.start).getTime() -
+        new Date(a.timeStamps.start).getTime()
+    )[0];
 
 const isPlayingActivity = (a) => a.type === 'PLAYING';
 
@@ -45,6 +47,7 @@ const safeCall = (fn, ...args) => fn && fn(...args);
 
 client.on('presenceUpdate', (previous, current) => {
   if (!watchedNames.includes(current.user.username)) return;
+
   if (!previous || !current) return;
 
   const currentActivities = [...current.activities];
@@ -53,6 +56,7 @@ client.on('presenceUpdate', (previous, current) => {
   const recentGameActivity = toLatestActivity(
     currentActivities.filter(isPlayingActivity)
   );
+
   if (!recentGameActivity) return;
 
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
