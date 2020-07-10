@@ -19,7 +19,7 @@ const sendMessage = (content) => {
 
   registerMessage(content);
 
-  console.log(content);
+  console.log(`SENDING TO TELEGRAM: ${content}`);
 
   fetch(
     `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/sendMessage`,

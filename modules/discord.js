@@ -29,11 +29,10 @@ const getWatchedPlayersPlayingGame = (game) =>
 
 const toLatestActivity = (activities) =>
   [...activities]
-    .filter(({ timeStamps }) => !!timeStamps)
     .sort(
       (a, b) =>
-        new Date(b.timeStamps.start).getTime() -
-        new Date(a.timeStamps.start).getTime()
+        new Date(b.timestamps.start).getTime() -
+        new Date(a.timestamps.start).getTime()
     )[0];
 
 const isPlayingActivity = (a) => a.type === 'PLAYING';
@@ -46,18 +45,21 @@ const startedNewGame = (previousActivities, recentGameActivity) =>
 const safeCall = (fn, ...args) => fn && fn(...args);
 
 client.on('presenceUpdate', (previous, current) => {
-  if (!watchedNames.includes(current.user.username)) return;
+  if (!watchedNames.includes(current.user.username)) return console.log('ABORTING: Non-watched user event');
 
-  if (!previous || !current) return;
+  if (!previous || !current) return console.log('ABORTING: previous or current state missing');
 
   const currentActivities = [...current.activities];
   const previousActivities = [...previous.activities];
 
-  const recentGameActivity = toLatestActivity(
-    currentActivities.filter(isPlayingActivity)
-  );
+  const playingActivities = currentActivities.filter(isPlayingActivity);
+  
+  console.log(playingActivities.map(a => `activity: ${a.name}, timeStamps: ${a.timestamps}`))
 
-  if (!recentGameActivity) return;
+  const recentGameActivity = toLatestActivity(playingActivities);
+
+
+  if (!recentGameActivity) return console.log('ABORTING: no recent game actibity');
 
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
