@@ -44,8 +44,6 @@ const startedNewGame = (previousActivities, recentGameActivity) =>
     (previousActivity) => previousActivity.name === recentGameActivity.name
   );
 
-const safeCall = (fn, ...args) => fn && fn(...args);
-
 client.on('presenceUpdate', (previous, current) => {
   const isPrimaryPlayer = watchedNames.includes(current.user.username);
   const isSecondaryPlayer = secondaryWatchedNames.includes(
@@ -69,9 +67,8 @@ client.on('presenceUpdate', (previous, current) => {
   const startedPlaying = startedNewGame(previousActivities, recentGameActivity);
 
   if (startedPlaying) {
-    safeCall(
+    playerStartGameHandler(
       [isPrimaryPlayer, isSecondaryPlayer],
-      playerStartGameHandler,
       current.user.username,
       recentGameActivity.name,
       getWatchedPlayersPlayingGame(recentGameActivity.name)
