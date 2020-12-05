@@ -1,6 +1,9 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const watchedNames = process.env.WATCHED_NAMES.split(',').map((v) => v.trim());
+const secondaryWatchedNames = process.env.WATCHED_NAMES2.split(',').map((v) =>
+  v.trim()
+);
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 client.on('ready', () => {
@@ -44,7 +47,11 @@ const startedNewGame = (previousActivities, recentGameActivity) =>
 const safeCall = (fn, ...args) => fn && fn(...args);
 
 client.on('presenceUpdate', (previous, current) => {
-  if (!watchedNames.includes(current.user.username)) return;
+  const isPrimaryPlayer = watchedNames.includes(current.user.username);
+  const isSecondaryPlayer = secondaryWatchedNames.includes(
+    current.user.username
+  );
+  if (!isPrimaryPlayer && !isSecondaryPlayer) return;
 
   if (!previous || !current)
     return console.log('DISCORD ABORTING: previous or current state missing');
@@ -63,6 +70,7 @@ client.on('presenceUpdate', (previous, current) => {
 
   if (startedPlaying) {
     safeCall(
+      [isPrimaryPlayer, isSecondaryPlayer],
       playerStartGameHandler,
       current.user.username,
       recentGameActivity.name,
