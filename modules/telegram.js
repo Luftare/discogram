@@ -1,48 +1,44 @@
 const fetch = require('node-fetch');
 const FLOOD_LIMIT = 10 * 60 * 1000;
 
-let messageHistory = [];
+function TelegramSender(token, chatId) {
+  this.toke = token;
+  this.chatId = chatId;
+  this.messageHistory = [];
+}
 
-const tokens = [process.env.TELEGRAM_TOKEN, process.env.TELEGRAM_TOKEN2];
-const chatIds = [process.env.TELEGRAM_CHAT_ID, process.env.TELEGRAM_CHAT_ID2];
+TelegramSender.prototype = {
+  isFlood(content) {
+    !!this.messageHistory.find((m) => m.content === content);
+  },
+  registerMessage(content) {
+    const now = Date.now();
+    this.messageHistory.push({ content, time: now });
+    this.messageHistory = this.messageHistory.filter(
+      ({ time }) => now - time < FLOOD_LIMIT
+    );
+  },
+  sendMessage(content) {
+    if (this.isFlood(content)) return;
 
-const registerMessage = (content) => {
-  const now = Date.now();
-  messageHistory.push({ content, time: now });
-  messageHistory = messageHistory.filter(
-    ({ time }) => now - time < FLOOD_LIMIT
-  );
-};
+    this.registerMessage(content);
+    console.log(`SENDING TO TELEGRAM ${this.chatId}: ${content}`);
 
-const isFlood = (content) =>
-  !!messageHistory.find((m) => m.content === content);
-
-const sendMessage = (channels, content) => {
-  if (isFlood(content)) return;
-
-  registerMessage(content);
-
-  console.log(`SENDING TO TELEGRAM: ${content}`);
-
-  channels.forEach((isIncluded, index) => {
-    if (!isIncluded) {
-      return;
-    }
-    fetch(`https://api.telegram.org/bot${tokens[index]}/sendMessage`, {
+    fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        chat_id: chatIds[index],
+        chat_id: this.chatId,
         text: content,
         disable_notification: false,
         parse_mode: 'html',
       }),
     });
-  });
+  },
 };
 
 module.exports = {
-  sendMessage,
+  TelegramSender,
 };

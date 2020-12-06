@@ -10,11 +10,11 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-const getPlayingWatchedUsers = () => {
+const getPlayingWatchedUsers = (names) => {
   const [, guild] = [...client.guilds.cache].find(([id]) => id == GUILD_ID);
   const presences = [...guild.presences.cache].map(([, presence]) => presence);
   const watchedPresences = presences.filter((presence) =>
-    watchedNames.includes(presence.user.username)
+    names.includes(presence.user.username)
   );
   const playingWacthedPresences = watchedPresences.filter(
     (p) => !!p.activities.find(isPlayingActivity)
@@ -25,8 +25,8 @@ const getPlayingWatchedUsers = () => {
   }));
 };
 
-const getWatchedPlayersPlayingGame = (game) =>
-  getPlayingWatchedUsers()
+const getWatchedPlayersPlayingGame = (names, game) =>
+  getPlayingWatchedUsers(names)
     .filter(({ gameName }) => gameName === game)
     .map(({ userName }) => userName);
 
@@ -69,9 +69,15 @@ client.on('presenceUpdate', (previous, current) => {
   if (startedPlaying) {
     playerStartGameHandler(
       [isPrimaryPlayer, isSecondaryPlayer],
+      [
+        getWatchedPlayersPlayingGame(watchedNames, recentGameActivity.name),
+        getWatchedPlayersPlayingGame(
+          secondaryWatchedNames,
+          recentGameActivity.name
+        ),
+      ],
       current.user.username,
-      recentGameActivity.name,
-      getWatchedPlayersPlayingGame(recentGameActivity.name)
+      recentGameActivity.name
     );
   }
 });
