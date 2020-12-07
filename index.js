@@ -4,8 +4,11 @@ const { onPlayerStartGame, login } = require('./modules/discord');
 const { TelegramSender } = require('./modules/telegram');
 
 const senders = [
-  TelegramSender(process.env.TELEGRAM_TOKEN, process.env.TELEGRAM_CHAT_ID),
-  TelegramSender(process.env.TELEGRAM_TOKEN2, process.env.TELEGRAM_CHAT_ID2),
+  new TelegramSender(process.env.TELEGRAM_TOKEN, process.env.TELEGRAM_CHAT_ID),
+  new TelegramSender(
+    process.env.TELEGRAM_TOKEN2,
+    process.env.TELEGRAM_CHAT_ID2
+  ),
 ];
 
 onPlayerStartGame((channels, channelsPlayerNames, userName, gameName) => {
