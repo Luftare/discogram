@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const FLOOD_LIMIT = 10 * 60 * 1000;
 
 function TelegramSender(token, chatId) {
-  this.toke = token;
+  this.token = token;
   this.chatId = chatId;
   this.messageHistory = [];
 }
