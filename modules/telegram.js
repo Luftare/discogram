@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const FLOOD_LIMIT = 10 * 60 * 1000;
+const FLOOD_LIMIT = 60 * 60 * 1000;
 
 function TelegramSender(token, chatId) {
   this.token = token;
@@ -8,20 +8,20 @@ function TelegramSender(token, chatId) {
 }
 
 TelegramSender.prototype = {
-  isFlood(content) {
-    !!this.messageHistory.find((m) => m.content === content);
-  },
-  registerMessage(content) {
+  isFlood(key) {
     const now = Date.now();
-    this.messageHistory.push({ content, time: now });
     this.messageHistory = this.messageHistory.filter(
       ({ time }) => now - time < FLOOD_LIMIT
     );
+    return this.messageHistory.some((m) => m.key === key);
   },
-  sendMessage(content) {
-    if (this.isFlood(content)) return;
+  registerMessage(key) {
+    this.messageHistory.push({ key, time: Date.now() });
+  },
+  sendMessage(content, key) {
+    if (this.isFlood(key)) return;
 
-    this.registerMessage(content);
+    this.registerMessage(key);
     console.log(`SENDING TO TELEGRAM ${this.chatId}: ${content}`);
 
     fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {

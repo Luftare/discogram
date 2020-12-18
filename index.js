@@ -20,7 +20,8 @@ onPlayerStartGame((channels, channelsPlayerNames, userName, gameName) => {
     sender.sendMessage(
       `${allPlayerNames
         .map((name) => (name === userName ? `<b>${name}</b>` : name))
-        .join(', ')} 🎮 ${gameName}`
+        .join(', ')} 🎮 ${gameName}`,
+      userName
     );
   });
 });
